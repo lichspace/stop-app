@@ -16,11 +16,11 @@ if [[ "$UNIVERSAL" == "1" ]]; then
     ARM_SCRATCH="$PROJECT_DIR/.build/arm64"
     INTEL_SCRATCH="$PROJECT_DIR/.build/x86_64"
 
-    (cd "$PROJECT_DIR" && swift build -c "$CONFIGURATION" --triple arm64-apple-macosx13.0 --scratch-path "$ARM_SCRATCH" --product StopApp)
-    (cd "$PROJECT_DIR" && swift build -c "$CONFIGURATION" --triple x86_64-apple-macosx13.0 --scratch-path "$INTEL_SCRATCH" --product StopApp)
+    (cd "$PROJECT_DIR" && swift build -c "$CONFIGURATION" --triple arm64-apple-macosx12.0 --scratch-path "$ARM_SCRATCH" --product StopApp)
+    (cd "$PROJECT_DIR" && swift build -c "$CONFIGURATION" --triple x86_64-apple-macosx12.0 --scratch-path "$INTEL_SCRATCH" --product StopApp)
 
-    ARM_BIN_DIR="$(cd "$PROJECT_DIR" && swift build -c "$CONFIGURATION" --triple arm64-apple-macosx13.0 --scratch-path "$ARM_SCRATCH" --show-bin-path)"
-    INTEL_BIN_DIR="$(cd "$PROJECT_DIR" && swift build -c "$CONFIGURATION" --triple x86_64-apple-macosx13.0 --scratch-path "$INTEL_SCRATCH" --show-bin-path)"
+    ARM_BIN_DIR="$(cd "$PROJECT_DIR" && swift build -c "$CONFIGURATION" --triple arm64-apple-macosx12.0 --scratch-path "$ARM_SCRATCH" --show-bin-path)"
+    INTEL_BIN_DIR="$(cd "$PROJECT_DIR" && swift build -c "$CONFIGURATION" --triple x86_64-apple-macosx12.0 --scratch-path "$INTEL_SCRATCH" --show-bin-path)"
 
     /usr/bin/lipo -create \
         "$ARM_BIN_DIR/StopApp" \

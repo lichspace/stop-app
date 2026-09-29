@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
     name: "StopApp",
     platforms: [
-        .macOS(.v13)
+        .macOS(.v12)
     ],
     products: [
         .executable(name: "StopApp", targets: ["StopApp"])

@@ -25,7 +25,7 @@
 
 | 项目 | 要求 |
 | --- | --- |
-| 操作系统 | macOS 13 Ventura 或更高版本 |
+| 操作系统 | macOS 12 Monterey 或更高版本 |
 | 处理器 | Apple Silicon 或 Intel Mac |
 | 架构 | 通用二进制：`arm64` + `x86_64` |
 
@@ -70,7 +70,7 @@
 
 ### 环境要求
 
-- macOS 13 或更高版本
+- macOS 12 Monterey 或更高版本
 - Swift 6 工具链
 - Xcode Command Line Tools；使用命令行构建时不要求安装完整 Xcode
 - Python 3（仅重新生成 `.icns` 图标时使用）

@@ -8,7 +8,6 @@ struct StopAppApp: App {
                 .frame(minWidth: 720, minHeight: 680)
         }
         .windowStyle(.hiddenTitleBar)
-        .windowResizability(.contentMinSize)
 
         Settings {
             SettingsView()

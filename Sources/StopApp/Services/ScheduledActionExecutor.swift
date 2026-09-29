@@ -42,7 +42,7 @@ final class ScheduledActionExecutor {
         }
 
         // Give apps a moment to save state and quit gracefully before forcing them.
-        try? await Task.sleep(for: .seconds(3))
+        try? await Task.sleep(nanoseconds: 3_000_000_000)
 
         var forcedCount = 0
         for item in applications where !item.application.isTerminated {

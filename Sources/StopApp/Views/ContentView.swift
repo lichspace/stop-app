@@ -47,7 +47,7 @@ struct ContentView: View {
                         .frame(width: 7, height: 7)
                     Text(plan.action.title)
                     Text(model.remainingText)
-                        .font(.system(.callout, design: .monospaced, weight: .semibold))
+                        .font(.system(size: 13, weight: .semibold, design: .monospaced))
                         .monospacedDigit()
                 }
                 .font(.callout)
@@ -303,7 +303,7 @@ struct ContentView: View {
                     .foregroundStyle(.green)
                 Spacer()
                 Text(model.remainingText)
-                    .font(.system(.callout, design: .monospaced, weight: .semibold))
+                    .font(.system(size: 13, weight: .semibold, design: .monospaced))
                     .monospacedDigit()
             }
 

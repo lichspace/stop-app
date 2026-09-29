@@ -23,7 +23,7 @@
     <key>LSApplicationCategoryType</key>
     <string>public.app-category.utilities</string>
     <key>LSMinimumSystemVersion</key>
-    <string>13.0</string>
+    <string>12.0</string>
     <key>NSAppleEventsUsageDescription</key>
     <string>用于在定时任务到期时向 macOS 发送关机请求。</string>
     <key>NSHighResolutionCapable</key>
