@@ -2,10 +2,14 @@ name: Build macOS app
 
 on:
   push:
-    branches: [main]
     tags: ["v*"]
-  pull_request:
   workflow_dispatch:
+    inputs:
+      test_version:
+        description: "Test version, for example 0.1.4-test.1"
+        required: true
+        default: "0.1.4-test.1"
+        type: string
 
 permissions:
   contents: write
@@ -23,25 +27,40 @@ jobs:
       - name: Run tests
         run: swift test
 
+      - name: Resolve build version
+        id: version
+        env:
+          TEST_VERSION: ${{ inputs.test_version }}
+        run: |
+          if [[ "$GITHUB_EVENT_NAME" == "push" && "$GITHUB_REF_TYPE" == "tag" ]]; then
+            PACKAGE_VERSION="${GITHUB_REF_NAME#v}"
+            if [[ ! "$PACKAGE_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              echo "Release tags must use vMAJOR.MINOR.PATCH (for example v0.1.4)." >&2
+              exit 1
+            fi
+            APP_VERSION="$PACKAGE_VERSION"
+          else
+            PACKAGE_VERSION="$TEST_VERSION"
+            if [[ ! "$PACKAGE_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+-test\.[0-9]+$ ]]; then
+              echo "Test versions must use MAJOR.MINOR.PATCH-test.N (for example 0.1.4-test.1)." >&2
+              exit 1
+            fi
+            APP_VERSION="${PACKAGE_VERSION%%-test.*}"
+          fi
+
+          echo "package_version=$PACKAGE_VERSION" >> "$GITHUB_OUTPUT"
+          echo "app_version=$APP_VERSION" >> "$GITHUB_OUTPUT"
+
       - name: Build app bundle
         env:
+          APP_VERSION: ${{ steps.version.outputs.app_version }}
           BUILD_NUMBER: ${{ github.run_number }}
-        run: |
-          if [[ "$GITHUB_REF_TYPE" == "tag" ]]; then
-            export APP_VERSION="${GITHUB_REF_NAME#v}"
-          else
-            export APP_VERSION="0.1.0"
-          fi
-          ./scripts/build-app.sh release
+        run: ./scripts/build-app.sh release
 
       - name: Package app
-        run: |
-          if [[ "$GITHUB_REF_TYPE" == "tag" ]]; then
-            APP_VERSION="${GITHUB_REF_NAME#v}"
-          else
-            APP_VERSION="0.1.0"
-          fi
-          ditto -c -k --sequesterRsrc --keepParent dist/StopApp.app "dist/StopApp-macOS-${APP_VERSION}-unsigned.zip"
+        env:
+          PACKAGE_VERSION: ${{ steps.version.outputs.package_version }}
+        run: ditto -c -k --sequesterRsrc --keepParent dist/StopApp.app "dist/StopApp-macOS-${PACKAGE_VERSION}-unsigned.zip"
 
       - name: Prepare app artifact
         run: |
@@ -51,12 +70,13 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-artifact@v7
         with:
-          name: StopApp-macOS-app
+          name: StopApp-macOS-app-${{ steps.version.outputs.package_version }}
           path: dist/artifact
           if-no-files-found: error
 
       - name: Publish tagged release
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" "dist/StopApp-macOS-${GITHUB_REF_NAME#v}-unsigned.zip" --generate-notes --title "StopApp $GITHUB_REF_NAME"
+          PACKAGE_VERSION: ${{ steps.version.outputs.package_version }}
+        run: gh release create "$GITHUB_REF_NAME" "dist/StopApp-macOS-${PACKAGE_VERSION}-unsigned.zip" --generate-notes --title "StopApp $GITHUB_REF_NAME"

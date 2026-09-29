@@ -75,10 +75,18 @@ final class SchedulerViewModel: NSObject, ObservableObject {
     }
 
     var durationSummary: String {
+        durationSummary(language: .chinese)
+    }
+
+    func durationSummary(language: AppLanguage) -> String {
         guard let minutes = selectedDurationMinutes, minutes > 0 else {
-            return "等待输入时长"
+            return language.text("等待输入时长")
         }
-        return "将在 \(DurationTextFormatter.readable(minutes: minutes))后执行"
+        let duration = language.readableDuration(minutes: minutes)
+        if language == .chinese {
+            return "将在 \(duration)后执行"
+        }
+        return "Will execute in \(duration)"
     }
 
     var canSchedule: Bool {
@@ -86,7 +94,11 @@ final class SchedulerViewModel: NSObject, ObservableObject {
     }
 
     var primaryButtonTitle: String {
-        action == .quitApplications ? "开始计时" : "安排关机"
+        primaryButtonTitle(language: .chinese)
+    }
+
+    func primaryButtonTitle(language: AppLanguage) -> String {
+        language.text(action == .quitApplications ? "开始计时" : "安排关机")
     }
 
     func toggleSelection(for application: RunningApplicationItem) {

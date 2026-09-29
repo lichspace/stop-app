@@ -1,81 +1,74 @@
-<p align="center">
-  <img src="Assets/AppIcon-source.png" width="128" alt="定时关 App Icon">
-</p>
+[English](README.md) | [简体中文](README.zh-CN.md)
 
-<h1 align="center">定时关（StopApp）</h1>
+# StopApp (定时关)
 
-<p align="center">一个轻量、原生的 macOS 定时工具，在指定时间关闭所选应用或关闭电脑。</p>
+A lightweight native macOS utility that closes selected apps or shuts down your Mac after a countdown.
 
-<p align="center">
-  <a href="https://github.com/lichspace/stop-app/actions/workflows/build.yml"><img src="https://github.com/lichspace/stop-app/actions/workflows/build.yml/badge.svg" alt="Build macOS app"></a>
-</p>
+[![Build macOS app](https://github.com/lichspace/stop-app/actions/workflows/build.yml/badge.svg)](https://github.com/lichspace/stop-app/actions/workflows/build.yml)
 
-## 下载与安装
+## Download and install
 
-- [下载最新版本](https://github.com/lichspace/stop-app/releases/latest)（安装包文件名包含版本号，例如 `StopApp-macOS-0.1.3-unsigned.zip`）
-- [查看全部版本和更新说明](https://github.com/lichspace/stop-app/releases)
+Download the latest version from [GitHub Releases](https://github.com/lichspace/stop-app/releases/latest). The installer ZIP includes its version in the filename, for example `StopApp-macOS-0.1.4-unsigned.zip`.
 
-> 下载链接会在仓库首次推送 `v*` 标签并生成 GitHub Release 后生效；每个正式版安装包都包含对应的版本号。
+Unzip the download and drag `StopApp.app` into your Applications folder.
 
-下载后解压，将 `StopApp.app` 拖入“应用程序”文件夹即可。
+Builds are not signed or notarized with an Apple Developer ID. If macOS blocks the first launch, Control-click the app in Finder, choose **Open**, and confirm. You can also review the prompt in **System Settings → Privacy & Security**.
 
-当前自动构建产物尚未经过 Apple Developer ID 签名和公证。首次打开时若 macOS 阻止运行，请在 Finder 中右键应用并选择“打开”，然后确认运行；也可前往“系统设置 → 隐私与安全性”处理安全提示。
+### System requirements
 
-### 系统要求
-
-| 项目 | 要求 |
+| Requirement | Supported |
 | --- | --- |
-| 操作系统 | macOS 12 Monterey 或更高版本 |
-| 处理器 | Apple Silicon 或 Intel Mac |
-| 架构 | 通用二进制：`arm64` + `x86_64` |
+| macOS | macOS 12 Monterey or later |
+| Processor | Apple Silicon or Intel |
+| Architecture | Universal binary: `arm64` + `x86_64` |
 
-## 功能
+## Features
 
-- 自动发现当前运行的桌面应用，并在应用启动或退出后刷新列表。
-- 支持搜索和多选要关闭的应用。
-- 提供 `5 / 10 / 15 / 20 / 25 / 30 / 40 / 50 / 60` 分钟快捷选项。
-- 支持手动输入分钟数，并自动换算成“1小时25分钟”等可读时长。
-- 实时显示剩余时间，可随时取消任务。
-- 关闭应用时优先请求正常退出，3 秒后仍未退出才强制结束。
-- 支持定时向 macOS 发送关机请求。
-- 原生 macOS 双栏界面、应用列表 hover 与选中状态反馈。
+- Automatically discovers running desktop apps and refreshes when apps launch or quit.
+- Search and select one or more apps by name or bundle ID.
+- Quick countdowns: `5 / 10 / 15 / 20 / 25 / 30 / 40 / 50 / 60` minutes.
+- Enter a custom number of minutes and see it converted to a readable duration such as “1 hour 25 minutes”.
+- See the remaining time and cancel a scheduled action at any time.
+- Requests apps to quit normally, then force-quits them after three seconds if needed.
+- Schedule a macOS shutdown.
+- Native macOS two-column interface with clear hover and selection states.
 
-## 使用方法
+## Usage
 
-### 定时关闭应用
+### Schedule apps to close
 
-1. 选择“关闭应用”。
-2. 在右侧列表中选择一个或多个应用；可通过名称或 Bundle ID 搜索。
-3. 从时间菜单中选择快捷时长，或选择“手动输入…”并填写分钟数。
-4. 点击“开始计时”。
+1. Select **Close apps**.
+2. Choose one or more apps from the list. Search by app name or bundle ID if needed.
+3. Choose a preset duration or enter a custom number of minutes.
+4. Select **Start countdown**.
 
-任务到期时，StopApp 会查找与所选 Bundle ID 相同的运行实例，因此应用在计时期间重新启动后仍可被识别。
+When the countdown ends, StopApp checks for running apps with the selected bundle IDs, so an app can be relaunched while the timer is running.
 
-### 定时关机
+### Schedule a shutdown
 
-1. 选择“关闭电脑”。
-2. 设置倒计时时长。
-3. 保存其他应用中的工作，然后点击“安排关机”。
+1. Select **Shut down Mac**.
+2. Set the countdown duration.
+3. Save your work, then select **Schedule shutdown**.
 
-首次执行关机任务时，macOS 可能询问是否允许 StopApp 控制“系统事件”。
+The first shutdown may prompt macOS to let StopApp control **System Events**.
 
-## 权限与安全
+## Privacy and permissions
 
-- 读取当前运行应用和请求应用退出不需要额外权限。
-- 关机功能通过 macOS `System Events` 发起，相关权限可在“系统设置 → 隐私与安全性 → 自动化”中管理。
-- StopApp 不上传应用列表，不包含网络请求，也不收集使用数据。
-- 定时器运行在应用进程内；任务完成前请保持 StopApp 运行。电脑从睡眠状态恢复时，已过期任务会立即执行。
+- Discovering running apps and requesting that they quit does not require extra permissions.
+- Shutdown is requested through macOS **System Events**. Manage its permission under **System Settings → Privacy & Security → Automation**.
+- StopApp does not upload your app list, make network requests, or collect usage data.
+- Timers run in the app process. Keep StopApp running until the action completes. If your Mac sleeps, an overdue action runs when it wakes.
 
-## 本地开发
+## Development
 
-### 环境要求
+### Requirements
 
-- macOS 12 Monterey 或更高版本
-- Swift 6 工具链
-- Xcode Command Line Tools；使用命令行构建时不要求安装完整 Xcode
-- Python 3（仅重新生成 `.icns` 图标时使用）
+- macOS 12 Monterey or later
+- Swift 6 toolchain
+- Xcode Command Line Tools (the full Xcode app is not required for command-line builds)
+- Python 3 only when regenerating the `.icns` app icon
 
-克隆并运行：
+Clone and run:
 
 ```bash
 git clone https://github.com/lichspace/stop-app.git
@@ -83,91 +76,88 @@ cd stop-app
 swift run StopApp
 ```
 
-运行测试：
+Run unit tests:
 
 ```bash
 swift test
 ```
 
-构建可双击启动的通用应用：
+Build a universal app bundle:
 
 ```bash
 ./scripts/build-app.sh release
 open dist/StopApp.app
 ```
 
-构建产物位于 `dist/StopApp.app`。默认同时构建 Apple Silicon 与 Intel 架构；只构建当前机器架构时可设置 `UNIVERSAL=0`：
+By default, the build includes Apple Silicon and Intel architectures. To build only for the current Mac, set `UNIVERSAL=0`:
 
 ```bash
 UNIVERSAL=0 ./scripts/build-app.sh release
 ```
 
-自定义版本号与构建号：
+Set the app version and build number:
 
 ```bash
 APP_VERSION=0.2.0 BUILD_NUMBER=12 ./scripts/build-app.sh release
 ```
 
-重新生成应用图标：
+Regenerate the app icon:
 
 ```bash
 ./scripts/make-icns.py Assets/AppIcon-source.png Assets/AppIcon.icns
 ```
 
-### 项目结构
+### Project structure
 
 ```text
 .
-├── Assets/                         # 图标主图和 ICNS
-├── Packaging/Info.plist            # macOS 应用包元数据
+├── Assets/                         # App icon source and ICNS
+├── Packaging/Info.plist            # App bundle metadata
 ├── Sources/StopApp/
-│   ├── Models/                     # 定时计划与时长模型
-│   ├── Services/                   # 应用发现与操作执行
-│   ├── ViewModels/                 # 定时器和界面状态
-│   ├── Views/                      # SwiftUI 界面
-│   └── StopAppApp.swift            # 应用入口
-├── Tests/StopAppTests/             # Swift Testing 单元测试
-├── scripts/build-app.sh            # 通用架构应用打包
-└── scripts/make-icns.py            # App Icon 生成工具
+│   ├── Models/                     # Scheduled actions and duration models
+│   ├── Services/                   # App discovery and action execution
+│   ├── ViewModels/                 # Timer and view state
+│   ├── Views/                      # SwiftUI interface
+│   └── StopAppApp.swift            # App entry point
+├── Tests/StopAppTests/             # Swift Testing unit tests
+├── scripts/build-app.sh            # Universal app packaging
+└── scripts/make-icns.py            # App icon generation
 ```
 
-## 持续集成与发布
+## Continuous integration and releases
 
-[GitHub Actions 工作流](https://github.com/lichspace/stop-app/actions/workflows/build.yml)会在以下场景运行测试并构建应用：
+The [GitHub Actions workflow](https://github.com/lichspace/stop-app/actions/workflows/build.yml) does **not** run for ordinary commits or pushes. It runs for version tags and manual test builds.
 
-- 推送到 `main`
-- 提交 Pull Request
-- 在 Actions 页面手动触发
-- 推送 `v*` 版本标签
-
-普通构建可在对应的 Actions Run 页面下载 `StopApp-macOS-app` Artifact；解压一次即可得到 `StopApp.app`。推送版本标签时，工作流会把标签版本写入应用、生成带版本号的 ZIP 并自动创建 GitHub Release：
+Stable releases use `vMAJOR.MINOR.PATCH`, for example `v0.1.4`. Push a stable tag to run tests, build the universal app, and publish a GitHub Release with a versioned ZIP such as `StopApp-macOS-0.1.4-unsigned.zip`:
 
 ```bash
-git tag v0.1.0
-git push origin v0.1.0
+git tag v0.1.4
+git push origin v0.1.4
 ```
 
-## 参与开发
+Test builds use `MAJOR.MINOR.PATCH-test.N`, for example `0.1.4-test.1`, then `0.1.4-test.2` for the next iteration. In GitHub, open **Actions → Build macOS app → Run workflow** and enter the test version. A test build runs tests and uploads an artifact, but does not publish a GitHub Release. Its app bundle uses the numeric base version (`0.1.4`), while its artifact name includes the full test version.
 
-提交 Pull Request 前请确保：
+## Contributing
+
+Before opening a pull request, run:
 
 ```bash
 swift test
 ./scripts/build-app.sh release
 ```
 
-功能修改应同时补充或更新测试；界面修改建议在浅色和深色模式下检查，并确认窗口最小尺寸下没有内容溢出。
+Please update or add tests when changing behavior. For UI changes, check both light and dark appearances and verify that content fits at the minimum window size.
 
-## 常见问题
+## FAQ
 
-### 应用没有出现在列表中
+### An app is missing from the list
 
-列表只显示带普通桌面窗口的应用。点击右上角刷新按钮；应用启动和退出时列表也会自动更新。
+The list includes apps with regular desktop windows. Select the refresh button; the list also refreshes when apps launch or quit.
 
-### 关机任务执行失败
+### A shutdown action does not run
 
-检查“系统设置 → 隐私与安全性 → 自动化”中 StopApp 对“系统事件”的权限，然后重新创建任务。
+Check StopApp’s **System Events** permission under **System Settings → Privacy & Security → Automation**, then schedule the action again.
 
-### 关闭窗口后任务是否继续？
+### Does the timer continue after closing the window?
 
-只要 StopApp 进程仍在运行，任务会继续计时。使用 `Command-Q` 完全退出应用会终止尚未执行的任务。
+Yes, while StopApp remains running. Quitting with `Command-Q` stops any pending action.

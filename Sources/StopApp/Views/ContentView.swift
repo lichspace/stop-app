@@ -3,6 +3,11 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var model = SchedulerViewModel()
+    @AppStorage(AppLanguage.storageKey) private var languageIdentifier = AppLanguage.defaultLanguage.rawValue
+
+    private var language: AppLanguage {
+        AppLanguage(rawValue: languageIdentifier) ?? AppLanguage.defaultLanguage
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -18,6 +23,7 @@ struct ContentView: View {
         .frame(minWidth: 760, minHeight: 600)
         .background(AppPalette.canvas)
         .tint(AppPalette.accent)
+        .environment(\.locale, Locale(identifier: language.rawValue))
         .animation(.easeInOut(duration: 0.18), value: model.action)
         .animation(.easeInOut(duration: 0.18), value: model.durationSelectionMinutes)
         .animation(.easeInOut(duration: 0.18), value: model.scheduledPlan)
@@ -31,21 +37,39 @@ struct ContentView: View {
                 .frame(width: 42, height: 42)
 
             VStack(alignment: .leading, spacing: 1) {
-                Text("定时关")
+                Text(language.text("定时关"))
                     .font(.system(size: 19, weight: .semibold))
-                Text("定时关闭应用或电脑")
+                Text(language.text("定时关闭应用或电脑"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
 
             Spacer()
 
+            Menu {
+                ForEach(AppLanguage.allCases) { option in
+                    Button {
+                        languageIdentifier = option.rawValue
+                    } label: {
+                        if option == language {
+                            Label(option.displayName, systemImage: "checkmark")
+                        } else {
+                            Text(option.displayName)
+                        }
+                    }
+                }
+            } label: {
+                Label(language.text("语言"), systemImage: "globe")
+            }
+            .menuStyle(.borderlessButton)
+            .help(language.text("语言"))
+
             if let plan = model.scheduledPlan {
                 HStack(spacing: 7) {
                     Circle()
                         .fill(.green)
                         .frame(width: 7, height: 7)
-                    Text(plan.action.title)
+                    Text(plan.action.title(for: language))
                     Text(model.remainingText)
                         .font(.system(size: 13, weight: .semibold, design: .monospaced))
                         .monospacedDigit()
@@ -55,7 +79,7 @@ struct ContentView: View {
                 .frame(height: 30)
                 .background(AppPalette.selection, in: Capsule())
             } else {
-                Text("任务期间请保持应用运行")
+                Text(language.text("任务期间请保持应用运行"))
                     .font(.caption)
                     .foregroundStyle(.tertiary)
             }
@@ -75,11 +99,11 @@ struct ContentView: View {
 
     private var sidebar: some View {
         VStack(alignment: .leading, spacing: 0) {
-            SidebarLabel(title: "执行操作", systemImage: "bolt.fill")
+            SidebarLabel(title: language.text("执行操作"), systemImage: "bolt.fill")
 
-            Picker("执行操作", selection: $model.action) {
-                Text("关闭应用").tag(ScheduledAction.quitApplications)
-                Text("关闭电脑").tag(ScheduledAction.shutDown)
+            Picker(language.text("执行操作"), selection: $model.action) {
+                Text(language.text("关闭应用")).tag(ScheduledAction.quitApplications)
+                Text(language.text("关闭电脑")).tag(ScheduledAction.shutDown)
             }
             .pickerStyle(.segmented)
             .labelsHidden()
@@ -89,14 +113,14 @@ struct ContentView: View {
             Divider()
                 .padding(.vertical, 20)
 
-            SidebarLabel(title: "倒计时", systemImage: "timer")
+            SidebarLabel(title: language.text("倒计时"), systemImage: "timer")
 
-            Picker("倒计时时长", selection: $model.durationSelectionMinutes) {
+            Picker(language.text("倒计时时长"), selection: $model.durationSelectionMinutes) {
                 ForEach(DurationOption.menuOptions) { option in
-                    Text(option.title).tag(option.minutes)
+                    Text(option.title(for: language)).tag(option.minutes)
                 }
                 Divider()
-                Text("手动输入…").tag(0)
+                Text(language.text("手动输入…")).tag(0)
             }
             .pickerStyle(.menu)
             .labelsHidden()
@@ -106,9 +130,9 @@ struct ContentView: View {
 
             if model.durationSelectionMinutes == 0 {
                 HStack(spacing: 8) {
-                    TextField("分钟数", text: $model.manualMinutesText)
+                    TextField(language.text("分钟数"), text: $model.manualMinutesText)
                         .textFieldStyle(.roundedBorder)
-                    Text("分钟")
+                    Text(language.text("分钟"))
                         .font(.callout)
                         .foregroundStyle(.secondary)
                 }
@@ -116,13 +140,13 @@ struct ContentView: View {
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
 
-            Text(model.durationSummary)
+            Text(model.durationSummary(language: language))
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .padding(.top, 8)
 
             if model.action == .shutDown {
-                Label("关机前请保存未完成的工作", systemImage: "exclamationmark.triangle.fill")
+                Label(language.text("关机前请保存未完成的工作"), systemImage: "exclamationmark.triangle.fill")
                     .font(.caption)
                     .foregroundStyle(.orange)
                     .fixedSize(horizontal: false, vertical: true)
@@ -138,7 +162,7 @@ struct ContentView: View {
 
             if let statusMessage = model.statusMessage {
                 Label(
-                    statusMessage,
+                    language.text(statusMessage),
                     systemImage: model.statusIsError ? "exclamationmark.circle.fill" : "checkmark.circle.fill"
                 )
                 .font(.caption)
@@ -146,7 +170,7 @@ struct ContentView: View {
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.bottom, 10)
             } else if let validationMessage = model.validationMessage, model.scheduledPlan == nil {
-                Text(validationMessage)
+                Text(language.text(validationMessage))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .padding(.bottom, 10)
@@ -162,7 +186,7 @@ struct ContentView: View {
                     } else {
                         Image(systemName: "play.fill")
                     }
-                    Text(model.isExecuting ? "正在执行…" : model.primaryButtonTitle)
+                    Text(model.isExecuting ? language.text("正在执行…") : model.primaryButtonTitle(language: language))
                 }
                 .frame(maxWidth: .infinity)
             }
@@ -190,9 +214,13 @@ struct ContentView: View {
         VStack(spacing: 0) {
             HStack(alignment: .center, spacing: 12) {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("正在运行的应用")
+                    Text(language.text("正在运行的应用"))
                         .font(.title3.weight(.semibold))
-                    Text("已找到 \(model.runningApplications.count) 个应用，已选择 \(model.selectedApplications.count) 个")
+                    Text(String(
+                        format: language.text("已找到 %d 个应用，已选择 %d 个"),
+                        model.runningApplications.count,
+                        model.selectedApplications.count
+                    ))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -205,7 +233,7 @@ struct ContentView: View {
                     Image(systemName: "arrow.clockwise")
                 }
                 .buttonStyle(.borderless)
-                .help("刷新应用列表")
+                .help(language.text("刷新应用列表"))
                 .disabled(model.scheduledPlan != nil || model.isExecuting)
             }
             .padding(.horizontal, 22)
@@ -215,7 +243,7 @@ struct ContentView: View {
             HStack(spacing: 8) {
                 Image(systemName: "magnifyingglass")
                     .foregroundStyle(.secondary)
-                TextField("搜索名称或 Bundle ID", text: $model.searchText)
+                TextField(language.text("搜索名称或 Bundle ID"), text: $model.searchText)
                     .textFieldStyle(.plain)
             }
             .padding(.horizontal, 10)
@@ -236,7 +264,7 @@ struct ContentView: View {
                     Image(systemName: "app.dashed")
                         .font(.system(size: 32, weight: .light))
                         .foregroundStyle(.tertiary)
-                    Text(model.searchText.isEmpty ? "暂无可选应用" : "没有匹配的应用")
+                    Text(language.text(model.searchText.isEmpty ? "暂无可选应用" : "没有匹配的应用"))
                         .font(.callout)
                         .foregroundStyle(.secondary)
                 }
@@ -247,7 +275,8 @@ struct ContentView: View {
                         ForEach(model.filteredApplications) { application in
                             ApplicationRow(
                                 application: application,
-                                isSelected: model.selectedApplicationIDs.contains(application.id)
+                                isSelected: model.selectedApplicationIDs.contains(application.id),
+                                language: language
                             ) {
                                 model.toggleSelection(for: application)
                             }
@@ -277,12 +306,12 @@ struct ContentView: View {
             .frame(width: 94, height: 94)
 
             VStack(spacing: 7) {
-                Text("定时关闭电脑")
+                Text(language.text("定时关闭电脑"))
                     .font(.title2.weight(.semibold))
-                Text(model.durationSummary)
+                Text(model.durationSummary(language: language))
                     .font(.callout)
                     .foregroundStyle(.secondary)
-                Text("任务到期后会向 macOS 发送关机请求。首次使用时，\n系统可能要求允许“定时关”控制系统事件。")
+                Text(language.text("任务到期后会向 macOS 发送关机请求。首次使用时，\n系统可能要求允许“定时关”控制系统事件。"))
                     .font(.callout)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
@@ -298,7 +327,7 @@ struct ContentView: View {
     private func activeSchedule(_ plan: SchedulePlan) -> some View {
         VStack(alignment: .leading, spacing: 9) {
             HStack {
-                Label("任务进行中", systemImage: plan.action.systemImage)
+                Label(language.text("任务进行中"), systemImage: plan.action.systemImage)
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(.green)
                 Spacer()
@@ -311,7 +340,7 @@ struct ContentView: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
 
-            Button("取消任务") {
+            Button(language.text("取消任务")) {
                 model.cancelSchedule()
             }
             .buttonStyle(.borderless)
@@ -340,6 +369,7 @@ private struct SidebarLabel: View {
 private struct ApplicationRow: View {
     let application: RunningApplicationItem
     let isSelected: Bool
+    let language: AppLanguage
     let onToggle: () -> Void
     @State private var isHovered = false
 
@@ -352,7 +382,7 @@ private struct ApplicationRow: View {
                     .frame(width: 30, height: 30)
 
                 VStack(alignment: .leading, spacing: 1) {
-                    Text(application.name)
+                    Text(language.text(application.name))
                         .font(.callout.weight(.medium))
                         .lineLimit(1)
                     if let bundleIdentifier = application.bundleIdentifier {
@@ -380,7 +410,7 @@ private struct ApplicationRow: View {
                 isHovered = hovering
             }
         }
-        .accessibilityValue(isSelected ? "已选择" : "未选择")
+        .accessibilityValue(language.text(isSelected ? "已选择" : "未选择"))
     }
 
     private var rowBackground: Color {

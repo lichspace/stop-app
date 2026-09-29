@@ -7,9 +7,13 @@ enum ScheduledAction: String, CaseIterable, Identifiable, Sendable {
     var id: Self { self }
 
     var title: String {
+        title(for: .chinese)
+    }
+
+    func title(for language: AppLanguage) -> String {
         switch self {
-        case .quitApplications: "关闭应用"
-        case .shutDown: "关闭电脑"
+        case .quitApplications: language.text("关闭应用")
+        case .shutDown: language.text("关闭电脑")
         }
     }
 
@@ -27,7 +31,11 @@ struct DurationOption: Identifiable, Hashable, Sendable {
     var id: Int { minutes }
 
     var title: String {
-        "\(minutes) 分钟"
+        title(for: .chinese)
+    }
+
+    func title(for language: AppLanguage) -> String {
+        language == .chinese ? "\(minutes) 分钟" : "\(minutes) min"
     }
 
     static let menuOptions = [5, 10, 15, 20, 25, 30, 40, 50, 60].map(DurationOption.init)

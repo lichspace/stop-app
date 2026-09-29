@@ -25,6 +25,13 @@ struct ScheduleModelsTests {
         #expect(DurationTextFormatter.readable(minutes: 150) == "2小时30分钟")
     }
 
+    @Test func languageSwitchLocalizesLabelsAndDuration() {
+        #expect(AppLanguage.english.text("关闭应用") == "Quit apps")
+        #expect(AppLanguage.chinese.text("关闭应用") == "关闭应用")
+        #expect(AppLanguage.english.readableDuration(minutes: 85) == "1 hour 25 minutes")
+        #expect(AppLanguage.english.readableDuration(minutes: 60) == "1 hour")
+    }
+
     @Test func closingApplicationsRequiresATarget() {
         let plan = SchedulePlan(
             action: .quitApplications,
