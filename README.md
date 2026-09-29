@@ -140,7 +140,7 @@ APP_VERSION=0.2.0 BUILD_NUMBER=12 ./scripts/build-app.sh release
 - 在 Actions 页面手动触发
 - 推送 `v*` 版本标签
 
-普通构建可在对应的 Actions Run 页面下载 `StopApp-macOS-unsigned` Artifact。推送版本标签时，工作流会把标签版本写入应用并自动创建 GitHub Release：
+普通构建可在对应的 Actions Run 页面下载 `StopApp-macOS-app` Artifact；解压一次即可得到 `StopApp.app`。推送版本标签时，工作流会把标签版本写入应用、生成 ZIP 并自动创建 GitHub Release：
 
 ```bash
 git tag v0.1.0

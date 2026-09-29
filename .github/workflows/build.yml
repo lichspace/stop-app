@@ -40,8 +40,8 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-artifact@v7
         with:
-          name: StopApp-macOS-unsigned
-          path: dist/StopApp-macOS-unsigned.zip
+          name: StopApp-macOS-app
+          path: dist/StopApp.app
           if-no-files-found: error
 
       - name: Publish tagged release
