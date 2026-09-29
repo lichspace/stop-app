@@ -35,7 +35,13 @@ jobs:
           ./scripts/build-app.sh release
 
       - name: Package app
-        run: ditto -c -k --sequesterRsrc --keepParent dist/StopApp.app dist/StopApp-macOS-unsigned.zip
+        run: |
+          if [[ "$GITHUB_REF_TYPE" == "tag" ]]; then
+            APP_VERSION="${GITHUB_REF_NAME#v}"
+          else
+            APP_VERSION="0.1.0"
+          fi
+          ditto -c -k --sequesterRsrc --keepParent dist/StopApp.app "dist/StopApp-macOS-${APP_VERSION}-unsigned.zip"
 
       - name: Prepare app artifact
         run: |
@@ -53,4 +59,4 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v')
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" dist/StopApp-macOS-unsigned.zip --generate-notes --title "StopApp $GITHUB_REF_NAME"
+        run: gh release create "$GITHUB_REF_NAME" "dist/StopApp-macOS-${GITHUB_REF_NAME#v}-unsigned.zip" --generate-notes --title "StopApp $GITHUB_REF_NAME"

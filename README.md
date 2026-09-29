@@ -12,10 +12,10 @@
 
 ## 下载与安装
 
-- [下载最新版本（StopApp-macOS-unsigned.zip）](https://github.com/lichspace/stop-app/releases/latest/download/StopApp-macOS-unsigned.zip)
+- [下载最新版本](https://github.com/lichspace/stop-app/releases/latest)（安装包文件名包含版本号，例如 `StopApp-macOS-0.1.3-unsigned.zip`）
 - [查看全部版本和更新说明](https://github.com/lichspace/stop-app/releases)
 
-> 下载链接会在仓库首次推送 `v*` 标签并生成 GitHub Release 后生效。
+> 下载链接会在仓库首次推送 `v*` 标签并生成 GitHub Release 后生效；每个正式版安装包都包含对应的版本号。
 
 下载后解压，将 `StopApp.app` 拖入“应用程序”文件夹即可。
 
@@ -140,7 +140,7 @@ APP_VERSION=0.2.0 BUILD_NUMBER=12 ./scripts/build-app.sh release
 - 在 Actions 页面手动触发
 - 推送 `v*` 版本标签
 
-普通构建可在对应的 Actions Run 页面下载 `StopApp-macOS-app` Artifact；解压一次即可得到 `StopApp.app`。推送版本标签时，工作流会把标签版本写入应用、生成 ZIP 并自动创建 GitHub Release：
+普通构建可在对应的 Actions Run 页面下载 `StopApp-macOS-app` Artifact；解压一次即可得到 `StopApp.app`。推送版本标签时，工作流会把标签版本写入应用、生成带版本号的 ZIP 并自动创建 GitHub Release：
 
 ```bash
 git tag v0.1.0
