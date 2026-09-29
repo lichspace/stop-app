@@ -37,11 +37,16 @@ jobs:
       - name: Package app
         run: ditto -c -k --sequesterRsrc --keepParent dist/StopApp.app dist/StopApp-macOS-unsigned.zip
 
+      - name: Prepare app artifact
+        run: |
+          mkdir -p dist/artifact
+          ditto dist/StopApp.app dist/artifact/StopApp.app
+
       - name: Upload build artifact
         uses: actions/upload-artifact@v7
         with:
           name: StopApp-macOS-app
-          path: dist/StopApp.app
+          path: dist/artifact
           if-no-files-found: error
 
       - name: Publish tagged release
